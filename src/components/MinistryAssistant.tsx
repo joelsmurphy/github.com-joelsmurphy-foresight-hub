@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { LeaderRole, MinistryOutput, MinistryContext } from '@/types';
 import { Signal } from '@/types';
 import { CONTEXT_QUESTIONS, ROLE_LABELS, SPHERES } from '@/data/signals';
@@ -9,11 +9,51 @@ interface Props {
   signals: Signal[];
 }
 
-const ROLES: { value: LeaderRole; label: string; icon: string }[] = [
-  { value: 'pastor',        label: 'Pastor',                                  icon: '⛪' },
-  { value: 'denominational',label: 'Denominational / Org Leader',             icon: '🏛' },
-  { value: 'educator',      label: 'Theological Educator',                    icon: '📚' },
-  { value: 'member',        label: 'Congregation Member',                     icon: '🤝' },
+// SVG line icons — one per role
+const ROLE_ICONS: Record<LeaderRole, React.ReactNode> = {
+  pastor: (
+    <svg width={18} height={18} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
+      {/* Cross */}
+      <line x1="9" y1="2" x2="9" y2="12" />
+      <line x1="5.5" y1="5.5" x2="12.5" y2="5.5" />
+      {/* Base */}
+      <line x1="6" y1="16" x2="12" y2="16" />
+      <line x1="9" y1="12" x2="9" y2="16" />
+    </svg>
+  ),
+  denominational: (
+    <svg width={18} height={18} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
+      {/* Building columns */}
+      <line x1="2" y1="16" x2="16" y2="16" />
+      <line x1="4" y1="16" x2="4" y2="9" />
+      <line x1="9" y1="16" x2="9" y2="9" />
+      <line x1="14" y1="16" x2="14" y2="9" />
+      <polyline points="1,9 9,3 17,9" />
+    </svg>
+  ),
+  educator: (
+    <svg width={18} height={18} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
+      {/* Open book */}
+      <path d="M9 4 C9 4 6 3 3 4 L3 15 C6 14 9 15 9 15 C9 15 12 14 15 15 L15 4 C12 3 9 4 9 4Z" />
+      <line x1="9" y1="4" x2="9" y2="15" />
+    </svg>
+  ),
+  member: (
+    <svg width={18} height={18} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
+      {/* Two people */}
+      <circle cx="7" cy="5.5" r="2.5" />
+      <path d="M2 16 C2 12.5 4 11 7 11 C10 11 12 12.5 12 16" />
+      <circle cx="13" cy="5.5" r="2" />
+      <path d="M13 10 C15.5 10 17 11.5 17 14.5" />
+    </svg>
+  ),
+};
+
+const ROLES: { value: LeaderRole; label: string }[] = [
+  { value: 'pastor',        label: 'Pastor' },
+  { value: 'denominational',label: 'Denominational / Org Leader' },
+  { value: 'educator',      label: 'Theological Educator' },
+  { value: 'member',        label: 'Congregation Member' },
 ];
 
 const LEVEL_META = {
@@ -219,9 +259,10 @@ export default function MinistryAssistant({ signals }: Props) {
               style={{
                 background: role === r.value ? 'rgba(249,115,22,0.1)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${role === r.value ? 'rgba(249,115,22,0.35)' : 'rgba(255,255,255,0.07)'}`,
+                color: role === r.value ? 'rgba(249,115,22,0.8)' : 'rgba(255,255,255,0.3)',
               }}
             >
-              <span className="text-lg">{r.icon}</span>
+              <span className="flex-shrink-0">{ROLE_ICONS[r.value]}</span>
               <span
                 className="text-sm font-medium leading-tight"
                 style={{ color: role === r.value ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)' }}
