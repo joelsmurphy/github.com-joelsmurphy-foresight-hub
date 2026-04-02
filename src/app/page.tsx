@@ -11,6 +11,7 @@ import MinistryAssistant from '@/components/MinistryAssistant';
 import ScenarioGenerator from '@/components/ScenarioGenerator';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import HeroFigure from '@/components/HeroFigure';
+import Reveal from '@/components/Reveal';
 
 type ToolTab = 'ministry' | 'scenarios';
 
@@ -114,7 +115,7 @@ export default function Home() {
           <div className="w-full grid md:grid-cols-2 gap-12 items-center">
 
             {/* Left — text */}
-            <div className="flex flex-col">
+            <Reveal variant="left" className="flex flex-col">
 
               {/* Eyebrow */}
               <div className="flex items-center gap-3 mb-6">
@@ -228,12 +229,12 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Reveal>
 
             {/* Right — futuristic figure */}
-            <div className="flex items-center justify-center">
+            <Reveal variant="right" delay={1} className="flex items-center justify-center">
               <HeroFigure />
-            </div>
+            </Reveal>
           </div>
         </div>
 
@@ -258,6 +259,7 @@ export default function Home() {
       <section id="signals" className="px-6 md:px-12 py-20">
 
         {/* Section header */}
+        <Reveal>
         <div className="flex items-center gap-4 mb-2">
           <div style={{ width: 24, height: 1, background: '#C41424', opacity: 0.7 }} />
           <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(196,20,36,0.7)' }}>
@@ -283,8 +285,10 @@ export default function Home() {
             </p>
           </div>
         </div>
+        </Reveal>
 
         {/* Map layout */}
+        <Reveal delay={1}>
         <div className="flex gap-4">
           <div className="flex-shrink-0 w-44">
             <FilterPanel
@@ -323,7 +327,9 @@ export default function Home() {
             )}
           </div>
         </div>
+        </Reveal>
 
+        <Reveal delay={2}>
         <div className="mt-4">
           <HowToRead />
         </div>
@@ -331,6 +337,7 @@ export default function Home() {
         <p className="text-center text-xs mt-4" style={{ color: 'rgba(200,220,240,0.2)' }}>
           Click any signal dot to open its information card · Hover for a preview
         </p>
+        </Reveal>
       </section>
 
       {/* ════════════════════════════════════════════════════════════
@@ -342,6 +349,7 @@ export default function Home() {
         style={{ borderTop: '1px solid rgba(98,181,229,0.08)' }}
       >
         {/* Section header */}
+        <Reveal>
         <div className="flex items-center gap-4 mb-2">
           <div style={{ width: 24, height: 1, background: '#C41424', opacity: 0.7 }} />
           <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(196,20,36,0.7)' }}>
@@ -360,6 +368,7 @@ export default function Home() {
           Signals →{' '}
           <span style={{ color: '#62B5E5' }}>Strategy</span>
         </h2>
+        </Reveal>
 
         {/* Tool tab nav */}
         <div
@@ -397,12 +406,14 @@ export default function Home() {
         </div>
 
         {/* Tool content */}
+        <Reveal key={toolTab}>
         <div className="fade-in" key={toolTab}>
           {toolTab === 'ministry'
             ? <MinistryAssistant signals={signals} />
             : <ScenarioGenerator />
           }
         </div>
+        </Reveal>
       </section>
 
       {/* ════════════════════════════════════════════════════════════
