@@ -2,65 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── ADC Design tokens ─────────────────────────────────────────────────────── */
 :root {
-  --bg: #080810;
-  --surface: #0f0f1a;
-  --border: #1e1e35;
-  --amber: #f97316;
+  /* Backgrounds */
+  --bg:           #041C2C;
+  --bg-2:         #062034;
+  --bg-3:         #082540;
+
+  /* ADC Primary */
+  --adc-blue:     #004077;
+  --adc-red:      #C41424;
+  --adc-deep:     #041C2C;
+
+  /* ADC Secondary */
+  --blue-skies:   #62B5E5;
+  --tidepool:     #48A9C5;
+  --fundy:        #407EC9;
+
+  /* Derived / UI */
+  --blue:         #004077;
+  --blue-bright:  #62B5E5;
+  --blue-dim:     rgba(0, 64, 119, 0.55);
+  --blue-glow:    rgba(0, 64, 119, 0.2);
+  --blue-border:  rgba(98, 181, 229, 0.3);
+
+  --red:          #C41424;
+  --red-bright:   #E52535;
+  --red-glow:     rgba(196, 20, 36, 0.18);
+  --red-border:   rgba(196, 20, 36, 0.35);
+
+  --text:         rgba(255, 255, 255, 0.92);
+  --text-dim:     rgba(200, 220, 240, 0.65);
+  --text-faint:   rgba(200, 220, 240, 0.3);
+
+  --border:       rgba(98, 181, 229, 0.18);
+  --border-subtle:rgba(255, 255, 255, 0.06);
+  --surface:      rgba(4, 28, 44, 0.8);
 }
 
-* {
-  box-sizing: border-box;
-}
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   background: var(--bg);
-  color: rgba(255, 255, 255, 0.85);
-  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  font-family: 'Montserrat', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--blue-border);
   border-radius: 3px;
 }
 
-/* Select styling */
+/* ── Select ────────────────────────────────────────────────────────────────── */
 select option {
-  background: #1a1a2e;
-  color: rgba(255, 255, 255, 0.85);
+  background: #062034;
+  color: rgba(255,255,255,0.85);
 }
 
-/* Smooth transitions */
-button,
-a {
-  transition: opacity 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+/* ── Transitions ───────────────────────────────────────────────────────────── */
+button, a {
+  transition: opacity 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.25s, color 0.15s;
 }
 
+/* ── Animations ────────────────────────────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.fade-in {
-  animation: fadeIn 0.3s ease-out both;
-}
+.fade-in { animation: fadeIn 0.4s ease-out both; }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+.animate-spin { animation: spin 0.9s linear infinite; }
 
-.animate-spin {
-  animation: spin 0.8s linear infinite;
+/* Slow drifting geo blobs */
+@keyframes geo-drift-1 {
+  0%   { transform: translate(0%, 0%)   rotate(0deg)  scale(1); }
+  33%  { transform: translate(4%, -6%)  rotate(8deg)  scale(1.06); }
+  66%  { transform: translate(-3%, 4%)  rotate(-4deg) scale(0.96); }
+  100% { transform: translate(0%, 0%)   rotate(0deg)  scale(1); }
+}
+@keyframes geo-drift-2 {
+  0%   { transform: translate(0%, 0%)   rotate(0deg)   scale(1); }
+  40%  { transform: translate(-6%, 5%)  rotate(-10deg) scale(1.1); }
+  70%  { transform: translate(4%, -3%)  rotate(5deg)   scale(0.94); }
+  100% { transform: translate(0%, 0%)   rotate(0deg)   scale(1); }
+}
+@keyframes geo-drift-3 {
+  0%   { transform: translate(0%, 0%)  rotate(0deg) scale(1); }
+  50%  { transform: translate(3%, 7%)  rotate(6deg) scale(1.05); }
+  100% { transform: translate(0%, 0%)  rotate(0deg) scale(1); }
+}
+.geo-shape-1 { animation: geo-drift-1 22s ease-in-out infinite; }
+.geo-shape-2 { animation: geo-drift-2 28s ease-in-out infinite; }
+.geo-shape-3 { animation: geo-drift-3 19s ease-in-out infinite; }
+
+/* Title glow — ADC Blue Skies */
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 12px rgba(98,181,229,0.5),
+      0 0 35px rgba(0,64,119,0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(98,181,229,0.8),
+      0 0 55px rgba(0,64,119,0.5),
+      0 0 90px rgba(98,181,229,0.15);
+  }
+}
+.neon-text { animation: title-glow 4s ease-in-out infinite; }
+
+/* Box glow */
+@keyframes box-glow {
+  0%, 100% { box-shadow: 0 0 14px rgba(0,64,119,0.25), 0 0 40px rgba(0,64,119,0.08); }
+  50%       { box-shadow: 0 0 26px rgba(98,181,229,0.35), 0 0 60px rgba(0,64,119,0.15); }
+}
+.neon-box { animation: box-glow 4.5s ease-in-out infinite; }
+
+/* Shimmer */
+@keyframes shimmer {
+  0%   { opacity: 0.3; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+.border-shimmer { animation: shimmer 3.5s ease-in-out infinite; }
+
+/* Scan line */
+@keyframes scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Glass utility */
+.glass {
+  background: rgba(4, 28, 44, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(98, 181, 229, 0.18);
 }
