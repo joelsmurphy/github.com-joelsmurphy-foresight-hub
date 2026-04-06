@@ -52,7 +52,7 @@ const ROLE_ICONS: Record<LeaderRole, React.ReactNode> = {
 const ROLES: { value: LeaderRole; label: string }[] = [
   { value: 'pastor',        label: 'Pastor' },
   { value: 'denominational',label: 'Denominational / Org Leader' },
-  { value: 'member',        label: 'Congregation Member' },
+  { value: 'member',        label: 'Volunteer Leader' },
 ];
 
 const LEVEL_META = {
