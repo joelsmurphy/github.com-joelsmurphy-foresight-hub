@@ -84,27 +84,8 @@ button, a {
 }
 .animate-spin { animation: spin 0.9s linear infinite; }
 
-/* Slow drifting geo blobs */
-@keyframes geo-drift-1 {
-  0%   { transform: translate(0%, 0%)   rotate(0deg)  scale(1); }
-  33%  { transform: translate(4%, -6%)  rotate(8deg)  scale(1.06); }
-  66%  { transform: translate(-3%, 4%)  rotate(-4deg) scale(0.96); }
-  100% { transform: translate(0%, 0%)   rotate(0deg)  scale(1); }
-}
-@keyframes geo-drift-2 {
-  0%   { transform: translate(0%, 0%)   rotate(0deg)   scale(1); }
-  40%  { transform: translate(-6%, 5%)  rotate(-10deg) scale(1.1); }
-  70%  { transform: translate(4%, -3%)  rotate(5deg)   scale(0.94); }
-  100% { transform: translate(0%, 0%)   rotate(0deg)   scale(1); }
-}
-@keyframes geo-drift-3 {
-  0%   { transform: translate(0%, 0%)  rotate(0deg) scale(1); }
-  50%  { transform: translate(3%, 7%)  rotate(6deg) scale(1.05); }
-  100% { transform: translate(0%, 0%)  rotate(0deg) scale(1); }
-}
-.geo-shape-1 { animation: geo-drift-1 22s ease-in-out infinite; }
-.geo-shape-2 { animation: geo-drift-2 28s ease-in-out infinite; }
-.geo-shape-3 { animation: geo-drift-3 19s ease-in-out infinite; }
+/* Geo blobs — static (no animation for performance) */
+.geo-shape-1, .geo-shape-2, .geo-shape-3 { }
 
 /* Title glow — ADC Blue Skies */
 @keyframes title-glow {

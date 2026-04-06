@@ -83,14 +83,10 @@ function drawShape(ctx: CanvasRenderingContext2D, shape: GeoShape) {
   const [r, g, b] = hexToRgb(shape.color);
   const a = shape.alpha;
 
-  // Soft glow behind shape
-  ctx.shadowBlur = shape.size * 1.8;
-  ctx.shadowColor = `rgba(${r},${g},${b},${a * 0.4})`;
-
-  // Stroke only — wireframe aesthetic matching Futuring Hub imagery
+  // No shadowBlur — too expensive
   ctx.strokeStyle = `rgba(${r},${g},${b},${a})`;
-  ctx.lineWidth = 1.2;
-  ctx.fillStyle = `rgba(${r},${g},${b},${a * 0.06})`;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = `rgba(${r},${g},${b},${a * 0.05})`;
 
   if (shape.kind === 'triangle') drawTriangle(ctx, shape.size);
   else if (shape.kind === 'rect') drawRect(ctx, shape.size);
@@ -115,6 +111,8 @@ export default function AnimatedBackground() {
     let animId: number;
     let shapes: GeoShape[] = [];
     let nodes: Node[] = [];
+    let lastTime = 0;
+    const INTERVAL = 1000 / 30; // 30fps cap
 
     const KINDS: ShapeKind[] = ['triangle', 'triangle', 'rect', 'circle', 'diamond'];
 
@@ -128,44 +126,51 @@ export default function AnimatedBackground() {
       if (!canvas) return;
       const area = canvas.width * canvas.height;
 
-      // Floating geometric shapes
-      const shapeCount = Math.max(6, Math.floor(area / 28000));
+      // Fewer shapes — capped at 5
+      const shapeCount = Math.min(5, Math.max(3, Math.floor(area / 80000)));
       shapes = Array.from({ length: shapeCount }, () => ({
         x: rand(0, canvas.width),
         y: rand(0, canvas.height),
-        vx: rand(-0.12, 0.12),
-        vy: rand(-0.15, 0.05),
+        vx: rand(-0.08, 0.08),
+        vy: rand(-0.1, 0.03),
         rotation: rand(0, Math.PI * 2),
-        rotSpeed: rand(-0.003, 0.003),
-        size: rand(24, 90),
+        rotSpeed: rand(-0.002, 0.002),
+        size: rand(30, 75),
         kind: KINDS[Math.floor(Math.random() * KINDS.length)],
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        alpha: rand(0.08, 0.35),
+        alpha: rand(0.08, 0.28),
         alphaDir: Math.random() > 0.5 ? 1 : -1,
-        alphaSpeed: rand(0.0008, 0.003),
+        alphaSpeed: rand(0.0005, 0.002),
       }));
 
-      // Connection network nodes (smaller dots, connected by lines)
-      const nodeCount = Math.max(8, Math.floor(area / 18000));
+      // Fewer nodes — capped at 8
+      const nodeCount = Math.min(8, Math.max(4, Math.floor(area / 60000)));
       nodes = Array.from({ length: nodeCount }, () => ({
         x: rand(0, canvas.width),
         y: rand(0, canvas.height),
-        vx: rand(-0.08, 0.08),
-        vy: rand(-0.08, 0.08),
+        vx: rand(-0.06, 0.06),
+        vy: rand(-0.06, 0.06),
       }));
     }
 
-    function tick() {
+    function tick(now: number) {
       if (!canvas || !ctx) return;
+
+      // Pause when tab is hidden
+      if (document.hidden) { animId = requestAnimationFrame(tick); return; }
+
+      // Throttle to 30fps
+      if (now - lastTime < INTERVAL) { animId = requestAnimationFrame(tick); return; }
+      lastTime = now;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Update + draw shapes
       for (const s of shapes) {
         s.x += s.vx;
         s.y += s.vy;
         s.rotation += s.rotSpeed;
         s.alpha += s.alphaSpeed * s.alphaDir;
-        if (s.alpha > 0.38 || s.alpha < 0.04) s.alphaDir *= -1;
+        if (s.alpha > 0.28 || s.alpha < 0.04) s.alphaDir *= -1;
         if (s.y < -100) s.y = canvas.height + 100;
         if (s.y > canvas.height + 100) s.y = -100;
         if (s.x < -100) s.x = canvas.width + 100;
@@ -173,7 +178,6 @@ export default function AnimatedBackground() {
         drawShape(ctx, s);
       }
 
-      // Update nodes
       for (const n of nodes) {
         n.x += n.vx;
         n.y += n.vy;
@@ -181,43 +185,38 @@ export default function AnimatedBackground() {
         if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
       }
 
-      // Draw connection lines between nearby nodes
-      const CONNECT_DIST = 140;
+      // Connection lines — no shadowBlur
+      const CONNECT_DIST = 120;
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
-            const lineAlpha = (1 - dist / CONNECT_DIST) * 0.18;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = colorWithAlpha(BLUE_SKIES, lineAlpha);
-            ctx.lineWidth = 0.8;
-            ctx.shadowBlur = 0;
+            ctx.strokeStyle = colorWithAlpha(BLUE_SKIES, (1 - dist / CONNECT_DIST) * 0.15);
+            ctx.lineWidth = 0.7;
             ctx.stroke();
           }
         }
       }
 
-      // Draw node dots
       for (const n of nodes) {
         ctx.beginPath();
-        ctx.arc(n.x, n.y, 1.8, 0, Math.PI * 2);
-        ctx.fillStyle = colorWithAlpha(BLUE_SKIES, 0.45);
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = colorWithAlpha(BLUE_SKIES, 0.3);
+        ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = colorWithAlpha(BLUE_SKIES, 0.4);
         ctx.fill();
       }
 
-      ctx.shadowBlur = 0;
       animId = requestAnimationFrame(tick);
     }
 
     const ro = new ResizeObserver(() => { resize(); spawn(); });
     ro.observe(canvas);
-    resize(); spawn(); tick();
+    resize(); spawn();
+    animId = requestAnimationFrame(tick);
 
     return () => { cancelAnimationFrame(animId); ro.disconnect(); };
   }, []);
